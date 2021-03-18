@@ -47,8 +47,20 @@ const Login = () => {
 
 
     // user login by email and password
-    const handleForm = () => {
-
+    const handleForm = (e) => {
+        if(user.email && user.password){
+            firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+            .then((userCredential) => {
+                var user = userCredential.user;
+                setUser(user);
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorMessage)
+            });
+        }
+        e.preventDefault();
     }
 
     const handleBlur = (e) => {
@@ -97,6 +109,7 @@ const Login = () => {
                 </div>
                 <div className="col-3"></div>
             </div>
+            <p>Email : {user.email}</p>
         </div>
     );
 };
