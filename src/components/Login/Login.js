@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import firebase from "firebase/app";
 import "firebase/auth";
 import firebaseConfig from './firebase.config';
@@ -12,6 +12,12 @@ if(firebase.apps.length===0){
 }
 
 const Login = () => {
+    const [user, setUser] = useState({
+        isSignIn:false,
+        email:'',
+        password:'',
+        name:''
+    });
     const [loggedInUser, setLoggedInUser] = useContext(UserContext);
     let history = useHistory();
     let location = useLocation();
@@ -42,18 +48,24 @@ const Login = () => {
 
     // user login by email and password
     const handleForm = () => {
-        
+
     }
 
     const handleBlur = (e) => {
+        let isFieldValid = true;
         if(e.target.name === 'email'){
-            const isEmailValid = /\S+@\S+\.\S+/.test(e.target.value);
-            console.log(isEmailValid);
+            isFieldValid = /\S+@\S+\.\S+/.test(e.target.value);
         }
         if(e.target.name === 'password'){
             const isPasswordValid = e.target.value.length > 5 ;
             const passwordHasNumber = /\d{1}/.test(e.target.value);
-            console.log(isPasswordValid && passwordHasNumber);
+            isFieldValid = isPasswordValid && passwordHasNumber;
+        }
+        
+        if(isFieldValid){
+            const newUserInfo = {...user};
+            newUserInfo[e.target.name] = e.target.value;
+            setUser(newUserInfo);
         }
     }
 
@@ -67,12 +79,17 @@ const Login = () => {
                 <div className="col-3"></div>
                 <div className="col-6 mt-5 mb-5">
 
-                    <h4>User sign up form</h4>
+                    <h4>Name : {user.name}</h4>
+                    <h4>Email : {user.email}</h4>
+                    <h4>Password : {user.password}</h4>
+                    <h4 className='text-primary'>User sign up form</h4>
                     <form onClick={handleForm}>
-                        <input type="text" name="email" onBlur={handleBlur} className='form-control'/>
+                        <input type="text" name="name" onBlur={handleBlur} className='form-control' placeholder='Name'/>
+                        <br/>
+                        <input type="text" name="email" onBlur={handleBlur} className='form-control' placeholder='Email'/>
                         <br/>
                         <input type="password" name="password" onBlur={handleBlur}
-                        className='form-control'/>
+                        className='form-control' placeholder='Password'/>
                         <br/>
                         <input type="submit" value="Submit" className='btn btn-primary'/>
                     </form>
